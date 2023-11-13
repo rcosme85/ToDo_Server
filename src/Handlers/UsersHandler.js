@@ -1,4 +1,4 @@
-const { getUsers, getUserLogin, getUserById, postUser, deleteUser } = require("../Controllers/UsersController");
+const { getUsers, getUserLogin, getUserById, postUser, deleteUser, postUserGoogle } = require("../Controllers/UsersController");
 
 //Get Users
 const getUsersHandler = async (req, res) => {
@@ -44,7 +44,6 @@ const getUsersByIdHandler = async (req, res) => {
 
 //Add a new User
 const postUsersHandler = async (req, res) => {
- // return res.status(200).send("Post toDo - New");
   try {
     const { name, lastName, email, password, googleUser } = req.body;
     //email = email.toLowerCase();
@@ -55,6 +54,19 @@ const postUsersHandler = async (req, res) => {
     return res.status(401).json({ error: error.message });
   }
 };
+
+//Get or Add a new Google User
+const postUserGoogleHandler = async (req, res) => {
+  try {
+    const { name, lastName, email, password} = req.body;
+    const resultado = await postUserGoogle(name, lastName, email.toLowerCase(), password);
+    return res.status(200).json(resultado);
+
+  } catch (error) {
+    return res.status(401).json({ error: error.message });
+  }
+};
+
 
 //Delete a User
 const deleteUsersHandler = async (req, res) => {
@@ -71,6 +83,7 @@ module.exports = {
   getUsersLoginHandler,
   getUsersByIdHandler,
   postUsersHandler,
+  postUserGoogleHandler,
   deleteUsersHandler,
 };
 

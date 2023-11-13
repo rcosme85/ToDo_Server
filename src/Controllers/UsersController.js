@@ -44,6 +44,29 @@ const getUserById = async (id) => {
   return { data: findUser };
 };
 
+//GET OR POST - GOOGLE USER
+const postUserGoogle = async (name, lastName, email, password) => {
+  //GET - Google User
+  const findUserByEmail = await Users.findOne({
+    where: { email: email },
+  });
+  if (findUserByEmail) return { data: findUserByEmail };
+  // Genera el hash de la contraseña
+  const hashedPassword = await bcrypt.hash(password, 10);
+  //Si no existe se crea - POST - Google User
+  const newUser = await Users.create({
+    name: name,
+    lastName: lastName,
+    email,
+    password: hashedPassword,
+    //googleUser: googleUser || false,
+    googleUser: true
+  });
+
+  return { data: newUser, msg: "Created a new User" };
+};
+
+
 //POST - Add a new User
 const postUser = async (name, lastName, email, password, googleUser) => {
   const validateEmail = await Users.findAndCountAll({ where: { email } });
@@ -54,8 +77,6 @@ const postUser = async (name, lastName, email, password, googleUser) => {
    const hashedPassword = await bcrypt.hash(password, 10);
 
   const newUser = await Users.create({
-    // id: id || "",
-   // id: id,
     name: name,
     lastName: lastName,
     email,
@@ -104,6 +125,7 @@ const deleteUser = async (id) => {
 
 module.exports = {
   getUsers,
+  postUserGoogle,
   getUserLogin,
   getUserById,
   postUser,
